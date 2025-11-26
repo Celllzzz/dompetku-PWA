@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+body {
+  font-family: 'Poppins', sans-serif;
+  @apply bg-gray-50 text-gray-800;
+}
+
+/* Scrollbar cantik untuk Web */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #c7c7c7;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+@layer utilities {
+  /* Animasi Masuk: Muncul dari bawah, membesar, makin jelas */
+  .animate-popup-in {
+    animation: popupIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Animasi Keluar: Mengecil, turun sedikit, menghilang */
+  .animate-popup-out {
+    animation: popupOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
+@keyframes popupIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes popupOut {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px); /* Turun ke bawah saat hilang */
+  }
+}
