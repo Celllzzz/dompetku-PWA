@@ -69,7 +69,7 @@ export default function EditTransaction() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 pb-32 animate-fade-in">
+    <div className="p-6 space-y-6 animate-fade-in bg-gray-50 animate-fade-in">
       <div className="max-w-xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">

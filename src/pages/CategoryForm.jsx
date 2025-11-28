@@ -39,7 +39,7 @@ export default function CategoryForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 animate-fade-in">
+    <div className="p-6 space-y-6 animate-fade-in bg-gray-50">
       <div className="max-w-xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
           <button onClick={() => navigate(-1)} className="p-3 bg-white rounded-xl shadow-sm hover:bg-gray-50 border border-gray-100 transition-colors"><ArrowLeft size={20} /></button>
