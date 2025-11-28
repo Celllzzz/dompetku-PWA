@@ -4,7 +4,7 @@ import Layout from './components/Layout';
 import PWABadge from './PWABadge';
 import { ToastProvider } from './context/ToastContext';
 import { ConfirmProvider } from './context/ConfirmContext';
-import { AuthProvider, useAuth } from './context/AuthContext'; // Import Auth
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Pages
 import SplashScreen from './pages/SplashScreen';
@@ -18,34 +18,32 @@ import TransactionDetail from './pages/TransactionDetail';
 import EditTransaction from './pages/EditTransaction';
 import CategoryForm from './pages/CategoryForm';
 
-// Komponen Pembungkus untuk Proteksi Route
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  if (loading) return null; // Tunggu cek localStorage selesai
-  if (!user) return <Navigate to="/login" />; // Kalau gak ada user, tendang ke login
-  return <Layout>{children}</Layout>; // Kalau ada, tampilkan Layout & Halaman
+  if (loading) return null; 
+  if (!user) return <Navigate to="/login" />;
+  return <Layout>{children}</Layout>;
 };
 
 function AppContent() {
   const [splashFinished, setSplashFinished] = useState(false);
   const { loading } = useAuth();
 
-  // Tampilkan Splash Screen dulu
   if (!splashFinished) {
     return <SplashScreen onFinish={() => setSplashFinished(true)} />;
   }
 
-  // Setelah splash, jika loading auth masih jalan, tampilkan kosong/loading
   if (loading) return null;
 
   return (
-    <div className="max-w-md mx-auto bg-gray-50 min-h-screen shadow-xl relative">
+    // PERBAIKAN: Menghapus max-w-md agar responsive penuh di desktop
+    <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
       <Routes>
-        {/* Public Routes (Boleh diakses tanpa login) */}
+        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Protected Routes (Harus login) */}
+        {/* Protected Routes */}
         <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/add" element={<ProtectedRoute><AddTransaction /></ProtectedRoute>} />
         <Route path="/transaction/:id" element={<ProtectedRoute><TransactionDetail /></ProtectedRoute>} />
@@ -63,7 +61,7 @@ function AppContent() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider> {/* AuthProvider paling luar */}
+      <AuthProvider>
         <ToastProvider>
           <ConfirmProvider>
              <AppContent />

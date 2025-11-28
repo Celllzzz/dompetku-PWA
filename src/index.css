@@ -1,56 +1,60 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* === STYLE WAJIB UNTUK FULL SCREEN APP === */
+html, body, #root {
+  height: 100%; /* Paksa tinggi 100% layar */
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Matikan scroll browser bawaan */
+}
+
 body {
   font-family: 'Poppins', sans-serif;
   @apply bg-gray-50 text-gray-800;
+  -webkit-tap-highlight-color: transparent; /* Hilangkan highlight biru saat tap di HP */
 }
 
-/* Scrollbar cantik untuk Web */
+/* Scrollbar Custom (Hanya muncul di area konten nanti) */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #c7c7c7;
-  border-radius: 4px;
+  background: #cbd5e1;
+  border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: #94a3b8;
 }
 
 @layer utilities {
-  /* Animasi Masuk: Muncul dari bawah, membesar, makin jelas */
-  .animate-popup-in {
-    animation: popupIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
   }
-
-  /* Animasi Keluar: Mengecil, turun sedikit, menghilang */
-  .animate-popup-out {
-    animation: popupOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
+  
+  .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+  .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+  .animate-popup-in { animation: popupIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  .animate-popup-out { animation: popupOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 }
 
-@keyframes popupIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.9) translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
+/* Keyframes sama seperti sebelumnya... */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes popupIn { 0% { opacity: 0; transform: scale(0.9) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes popupOut { 0% { opacity: 1; transform: scale(1) translateY(0); } 100% { opacity: 0; transform: scale(0.9) translateY(20px); } }
 
-@keyframes popupOut {
-  0% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.9) translateY(20px); /* Turun ke bawah saat hilang */
-  }
+/* Loader */
+.loader {
+  width: 48px; height: 48px;
+  border: 5px solid #FFF;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
 }
+@keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
