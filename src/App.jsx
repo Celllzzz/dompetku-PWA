@@ -11,6 +11,7 @@ import SplashScreen from './pages/SplashScreen';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
+import HistoryPage from './pages/HistoryPage'; // Import Halaman History
 import AddTransaction from './pages/AddTransaction';
 import Categories from './pages/Categories';
 import Profile from './pages/Profile';
@@ -29,22 +30,18 @@ function AppContent() {
   const [splashFinished, setSplashFinished] = useState(false);
   const { loading } = useAuth();
 
-  if (!splashFinished) {
-    return <SplashScreen onFinish={() => setSplashFinished(true)} />;
-  }
-
+  if (!splashFinished) return <SplashScreen onFinish={() => setSplashFinished(true)} />;
   if (loading) return null;
 
   return (
-    // PERBAIKAN: Menghapus max-w-md agar responsive penuh di desktop
     <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
       <Routes>
-        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
         {/* Protected Routes */}
         <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+        <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} /> {/* Route Baru */}
         <Route path="/add" element={<ProtectedRoute><AddTransaction /></ProtectedRoute>} />
         <Route path="/transaction/:id" element={<ProtectedRoute><TransactionDetail /></ProtectedRoute>} />
         <Route path="/transaction/edit/:id" element={<ProtectedRoute><EditTransaction /></ProtectedRoute>} />

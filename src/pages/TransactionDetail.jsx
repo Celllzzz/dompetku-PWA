@@ -13,133 +13,71 @@ export default function TransactionDetail() {
   const { showToast } = useToast();
   const { showConfirm } = useConfirm();
 
-  // Helper Format Rupiah
   const formatRupiah = (num) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
 
   useEffect(() => {
     apiClient.get(`/transactions/${id}`)
       .then(res => setTrx(res.data))
-      .catch(err => {
-        console.error(err);
-        showToast("Gagal memuat data", "error");
-        navigate(-1);
-      })
+      .catch(err => { showToast("Gagal memuat data", "error"); navigate(-1); })
       .finally(() => setLoading(false));
   }, [id, navigate, showToast]);
 
   const handleDeleteClick = () => {
-    showConfirm(
-      "Hapus Transaksi?",
-      "Data yang dihapus tidak dapat dikembalikan. Lanjutkan?",
-      async () => {
-        try {
-          await apiClient.delete(`/transactions/${id}`);
-          showToast('Transaksi berhasil dihapus', 'success');
-          navigate('/');
-        } catch (error) {
-          showToast('Gagal menghapus data', 'error');
-        }
+    showConfirm("Hapus Transaksi?", "Data akan hilang permanen.", async () => {
+      try {
+        await apiClient.delete(`/transactions/${id}`);
+        showToast('Transaksi dihapus', 'success');
+        navigate('/');
+      } catch (error) {
+        showToast('Gagal menghapus', 'error');
       }
-    );
+    });
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="loader border-blue-600"></div></div>;
   if (!trx) return null;
 
   return (
-    <div className="p-6 space-y-6 animate-fade-in bg-gray-50 ">
-      <div className="max-w-xl mx-auto">
+    <div className="max-h-screen bg-gray-50 p-6 animate-fade-in flex flex-col justify-center max-w-xl mx-auto">
+      <div className="flex items-center gap-4 mb-6">
+        <button onClick={() => navigate(-1)} className="p-3 bg-white rounded-xl shadow-sm hover:bg-gray-100 border border-gray-100"><ArrowLeft size={20} /></button>
+        <h1 className="font-bold text-2xl text-gray-800">Detail</h1>
+      </div>
+
+      <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-gray-100 border border-white text-center relative overflow-hidden">
+        <div className={`absolute top-0 left-0 w-full h-3 ${trx.type === 'income' ? 'bg-green-500' : 'bg-red-500'}`}></div>
         
-        {/* Header Navigation */}
-        <div className="flex items-center gap-4 mb-8">
-          <button onClick={() => navigate(-1)} className="p-3 bg-white rounded-xl shadow-sm hover:bg-gray-50 border border-gray-100 transition-colors">
-            <ArrowLeft size={20} />
-          </button>
-          <h1 className="font-bold text-2xl text-gray-800">Detail Transaksi</h1>
+        <div className={`w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6 shadow-sm ${trx.type === 'income' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+          {trx.type === 'income' ? <ArrowUpCircle size={48} /> : <ArrowDownCircle size={48} />}
         </div>
 
-        <div className="space-y-6">
-          
-          {/* Main Card (Nominal) */}
-          <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-blue-50 border border-white relative overflow-hidden text-center">
-            {/* Garis Indikator di Atas */}
-            <div className={`absolute top-0 left-0 w-full h-2 ${trx.type === 'income' ? 'bg-green-500' : 'bg-red-500'}`}></div>
-            
-            <div className={`w-20 h-20 mx-auto rounded-3xl flex items-center justify-center mb-4 shadow-sm transition-transform hover:scale-110 ${
-              trx.type === 'income' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
-            }`}>
-              {trx.type === 'income' ? <ArrowUpCircle size={40} /> : <ArrowDownCircle size={40} />}
-            </div>
+        <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-2">{trx.type === 'income' ? 'PEMASUKAN' : 'PENGELUARAN'}</p>
+        <h2 className={`text-4xl font-extrabold mb-8 tracking-tight ${trx.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+          {formatRupiah(trx.amount)}
+        </h2>
 
-            <p className="text-gray-400 text-sm font-bold tracking-wide uppercase mb-2">
-              {trx.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}
-            </p>
-            
-            <h2 className={`text-4xl font-bold mb-1 tracking-tight ${trx.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-              {formatRupiah(trx.amount)}
-            </h2>
+        <div className="space-y-4 text-left">
+          <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+            <div className="p-2.5 bg-white text-blue-600 rounded-xl shadow-sm"><AlignLeft size={20} /></div>
+            <div><p className="text-[10px] text-gray-400 font-bold uppercase">Keterangan</p><p className="font-bold text-gray-800">{trx.title}</p></div>
           </div>
-
-          {/* Details Info */}
-          <div className="bg-white p-6 rounded-[2rem] shadow-lg shadow-gray-100 border border-gray-100 space-y-4">
-            
-            <div className="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-50 transition-colors">
-              <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
-                <AlignLeft size={22} />
-              </div>
-              <div>
-                <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Keterangan</p>
-                <p className="font-bold text-gray-800 text-lg">{trx.title}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-50 transition-colors">
-              <div className="p-3 bg-purple-50 text-purple-600 rounded-xl">
-                <Tag size={22} />
-              </div>
-              <div>
-                <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Kategori</p>
-                <p className="font-bold text-gray-800 text-lg">{trx.categories?.name || 'Tanpa Kategori'}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-50 transition-colors">
-              <div className="p-3 bg-orange-50 text-orange-600 rounded-xl">
-                <Calendar size={22} />
-              </div>
-              <div>
-                <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Tanggal</p>
-                <p className="font-bold text-gray-800 text-lg">
-                  {new Date(trx.date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                </p>
-              </div>
-            </div>
-
+          <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+            <div className="p-2.5 bg-white text-purple-600 rounded-xl shadow-sm"><Tag size={20} /></div>
+            <div><p className="text-[10px] text-gray-400 font-bold uppercase">Kategori</p><p className="font-bold text-gray-800">{trx.categories?.name}</p></div>
           </div>
-
-          {/* Action Buttons */}
-          <div className="grid grid-cols-2 gap-4 pt-2">
-            <button 
-              onClick={() => navigate(`/transaction/edit/${id}`)} 
-              className="flex items-center justify-center gap-2 py-4 rounded-2xl font-bold bg-blue-50 text-blue-600 hover:bg-blue-100 hover:shadow-lg hover:shadow-blue-100 transition-all active:scale-95 border border-blue-100"
-            >
-              <Edit2 size={20} /> Edit
-            </button>
-            <button 
-              onClick={handleDeleteClick} 
-              className="flex items-center justify-center gap-2 py-4 rounded-2xl font-bold bg-red-50 text-red-600 hover:bg-red-100 hover:shadow-lg hover:shadow-red-100 transition-all active:scale-95 border border-red-100"
-            >
-              <Trash2 size={20} /> Hapus
-            </button>
+          <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+            <div className="p-2.5 bg-white text-orange-600 rounded-xl shadow-sm"><Calendar size={20} /></div>
+            <div><p className="text-[10px] text-gray-400 font-bold uppercase">Waktu</p><p className="font-bold text-gray-800">{new Date(trx.date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p></div>
           </div>
+        </div>
 
+        <div className="grid grid-cols-2 gap-4 mt-8">
+          <button onClick={() => navigate(`/transaction/edit/${id}`)} className="flex items-center justify-center gap-2 py-4 rounded-2xl font-bold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
+            <Edit2 size={18} /> Edit
+          </button>
+          <button onClick={handleDeleteClick} className="flex items-center justify-center gap-2 py-4 rounded-2xl font-bold bg-red-50 text-red-600 hover:bg-red-100 transition-colors">
+            <Trash2 size={18} /> Hapus
+          </button>
         </div>
       </div>
     </div>
